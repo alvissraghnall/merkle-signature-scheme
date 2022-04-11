@@ -10,9 +10,11 @@ import java.util.Arrays;
 public class SignatureGen {
 	
 	private String message;
+	private KeyValue keypair;
 
-	public SignatureGen(String message) {
+	public SignatureGen(String message, KeyValue keypair) {
 		this.message = message;
+		this.keypair = keypair;
 	}
 	
 	private String digestToBinary (byte[] digest) {
@@ -20,7 +22,20 @@ public class SignatureGen {
 		return binaryStrInt.toString(2);
 	}
 	
-	private String toBinary(byte digest[]) {
+	
+	public byte[][] signature () throws NoSuchAlgorithmException {
+		byte[] messageHash = this.hashMessage();
+		String msgAsBinaryString = this.getBytesFromHash(messageHash);
+		byte[][][] pk = this.keypair.getPrivateKey();
+		byte[][] sig = new byte[256][32];
+		
+		for(int i = 0; i < msgAsBinaryString.length(); i++ ) {
+			sig[i] = msgAsBinaryString.charAt(i) == '0' ?  pk[0][i] : pk[1][i];
+		}
+		return sig;
+	}
+	
+	private String hashToBinaryString(byte digest[]) {
 		StringBuilder sb = new StringBuilder(digest.length * Byte.SIZE);
 		
 		for(int i = 0; i < digest.length * Byte.SIZE; i++) {
@@ -29,7 +44,7 @@ public class SignatureGen {
 		return sb.toString();
 	}
 	
-	private String getBytes(byte[] digest) {
+	private String getBytesFromHash(byte[] digest) {
 		StringBuilder sb = new StringBuilder();
 		for( byte b : digest ) {
 			sb.append(Integer.toBinaryString(b & 255 | 256).substring(1));
@@ -45,11 +60,19 @@ public class SignatureGen {
 	}
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		SignatureGen mg = new SignatureGen("DOOM");
+		KeyGen keygen = new KeyGen();
+		KeyValue keypair = keygen.generateKeys();
+		SignatureGen mg = new SignatureGen("DOOM", keypair);
 		byte[] hash = mg.hashMessage();
 		System.out.println(Arrays.toString(hash));
 		System.out.println(mg.digestToBinary(hash));
-		System.out.println(mg.toBinary(hash));
-		System.out.println(mg.getBytes(hash));
+		System.out.println(mg.hashToBinaryString(hash));
+		System.out.println(mg.getBytesFromHash(hash));
+		System.out.println("====");
+		System.out.println(Arrays.toString(mg.signature()[0]));
+		System.out.println(Arrays.toString(keypair.getPrivateKey()[1][0]));
+		System.out.println(Arrays.toString(mg.signature()[0]).equals(Arrays.toString(keypair.getPrivateKey()[1][0])));
+
+		System.out.println(Arrays.toString(mg.signature()[1]).equals(Arrays.toString(keypair.getPrivateKey()[0][1])));
 	}
 }
