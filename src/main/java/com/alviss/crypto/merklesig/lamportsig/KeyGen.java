@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 
-class KeyGen {
+public class KeyGen {
 
 	private byte[][][] genPrivate () {
 		SecureRandom secRan = new SecureRandom();
