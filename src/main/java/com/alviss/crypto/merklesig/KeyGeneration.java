@@ -13,14 +13,19 @@ public class KeyGeneration {
 	List<KeyValue> keypairs;
 
 	public KeyGeneration (int N) {
-		this.keypairs = new ArrayList<>();
+		this.keypairs = keyPairsArray(N);
+	}
+	
+	private ArrayList<KeyValue> keyPairsArray (int N) {
+		ArrayList<KeyValue> keypairs = new ArrayList<>();
 		KeyGen keygen = new KeyGen();
 		for (int i = 0; i < N; i++) {
 			keypairs.add(keygen.generateKeys());
 		}
+		return keypairs;
 	}
 	
-	private List<KeyValue> hashPubKeys () {
+	private List<byte[]> hashPubKeys () {
 		MessageDigest md;
 		List<byte[]> hashedPubKeys = new ArrayList<>();
 		try {
@@ -32,6 +37,7 @@ public class KeyGeneration {
 		} catch (NoSuchAlgorithmException exp) {
 			exp.printStackTrace();
 		}
+		return null;
 	}
 	
 }
