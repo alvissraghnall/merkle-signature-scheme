@@ -3,7 +3,7 @@ package com.alviss.crypto.merklesig.tree;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
+import java.io.ByteArrayOutputStream;
 
 public class BinaryTree {
   
