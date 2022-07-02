@@ -70,8 +70,15 @@ public class BinaryTree {
                   } else {
                       rightChild = new Node(null, null, leftChild.getHash());
                   }
+                  
+                  ByteArrayOutputStream outputStream = new ByteArrayOutputStream(leftChild.getHash().length + rightChild.getHash().length);
+                 outputStream.write(leftChild.getHash());
+                 outputStream.write(rightChild.getHash());
+                 
+                 byte concatted[] = outputStream.toByteArray();
+                 
   
-                  String parentHash = HashAlgorithm.generateHash(leftChild.getHash() + rightChild.getHash());
+                  byte[] parentHash = HashUtil.generateHash(concatted);
                   parents.add(new Node(leftChild, rightChild, parentHash));
                   index += 2;
               }
