@@ -6,6 +6,9 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.alviss.crypto.merklesig.lamportsig.util.PrivateKey;
+import com.alviss.crypto.merklesig.lamportsig.util.PublicKey;
+
 public class KeyGen {
 
 	private byte[][][] genPrivate () {
@@ -40,8 +43,8 @@ public class KeyGen {
 	}
 	
 	public KeyValue generateKeys () {
-		byte[][][] privKey = this.genPrivate();
-		return new KeyValue(privKey, this.genPublic(privKey));
+		PrivateKey privKey = PrivateKey.generate();
+		return new KeyValue(privKey, PublicKey.generate(privKey));
 	}
 //	
 //	public static void main(String[] args) throws NoSuchAlgorithmException {

@@ -7,7 +7,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class SignatureGen {
+import com.alviss.crypto.merklesig.lamportsig.util.SignatureUtils;
+
+public class SignatureGen extends SignatureUtils {
 	
 	private String message;
 	private KeyValue keypair;
@@ -24,9 +26,9 @@ public class SignatureGen {
 	
 	
 	public byte[][] signature () throws NoSuchAlgorithmException {
-		byte[] messageHash = this.hashMessage();
+		byte[] messageHash = this.hashMessage(message);
 		String msgAsBinaryString = this.getBytesFromHash(messageHash);
-		byte[][][] pk = this.keypair.getPrivateKey();
+		byte[][][] pk = this.keypair.getPrivateKey().getPrivateKey();
 		byte[][] sig = new byte[256][32];
 		
 		for(int i = 0; i < msgAsBinaryString.length(); i++ ) {
@@ -35,44 +37,22 @@ public class SignatureGen {
 		return sig;
 	}
 	
-	private String hashToBinaryString(byte digest[]) {
-		StringBuilder sb = new StringBuilder(digest.length * Byte.SIZE);
-		
-		for(int i = 0; i < digest.length * Byte.SIZE; i++) {
-			sb.append((digest[i / Byte.SIZE] << i % Byte.SIZE & 0x80) == 0 ? '0' : '1');
-		}
-		return sb.toString();
-	}
-	
-	private String getBytesFromHash(byte[] digest) {
-		StringBuilder sb = new StringBuilder();
-		for( byte b : digest ) {
-			sb.append(Integer.toBinaryString(b & 255 | 256).substring(1));
-		}
-		return sb.toString();
-	}
-
-	private byte[] hashMessage () throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		byte[] msgInBytes = message.getBytes(StandardCharsets.UTF_8);
-		
-		return md.digest(msgInBytes);
-	}
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		KeyGen keygen = new KeyGen();
 		KeyValue keypair = keygen.generateKeys();
 		SignatureGen mg = new SignatureGen("DOOM", keypair);
-		byte[] hash = mg.hashMessage();
+		byte[] hash = mg.hashMessage(mg.message);
 		System.out.println(Arrays.toString(hash));
 		System.out.println(mg.digestToBinary(hash));
-		System.out.println(mg.hashToBinaryString(hash));
-		System.out.println(mg.getBytesFromHash(hash));
+		System.out.println(mg.hashToBinaryString(hash).equals(mg.getBytesFromHash(hash)));;
+//		System.out.println(mg.getBytesFromHash(hash));
 		System.out.println("====");
+		System.out.println(Arrays.deepToString(mg.signature()));
 		System.out.println(Arrays.toString(mg.signature()[0]));
-		System.out.println(Arrays.toString(keypair.getPrivateKey()[1][0]));
-		System.out.println(Arrays.toString(mg.signature()[0]).equals(Arrays.toString(keypair.getPrivateKey()[1][0])));
+		System.out.println(Arrays.toString(keypair.getPrivateKey().getPrivateKey()[1][0]));
+		System.out.println(Arrays.toString(mg.signature()[0]).equals(Arrays.toString(keypair.getPrivateKey().getPrivateKey()[1][0])));
 
-		System.out.println(Arrays.toString(mg.signature()[1]).equals(Arrays.toString(keypair.getPrivateKey()[0][1])));
+		System.out.println(Arrays.toString(mg.signature()[1]).equals(Arrays.toString(keypair.getPrivateKey().getPrivateKey()[0][1])));
 	}
 }

@@ -1,17 +1,20 @@
 package com.alviss.crypto.merklesig.lamportsig;
 
+import com.alviss.crypto.merklesig.lamportsig.util.PrivateKey;
+import com.alviss.crypto.merklesig.lamportsig.util.PublicKey;
+
 public class KeyValue {
 
-	private byte[][][] privateKey;
+	private PrivateKey privateKey;
 	
-	private byte[][][] publicKey;
+	private PublicKey publicKey;
 
-	protected KeyValue(byte[][][] privateKey, byte[][][] publicKey) {
+	protected KeyValue(PrivateKey privateKey, PublicKey publicKey) {
 		this.privateKey = privateKey;
 		this.publicKey = publicKey;
 	}
 
-	protected byte[][][] getPrivateKey() {
+	protected PrivateKey getPrivateKey() {
 		return privateKey;
 	}
 //
@@ -20,7 +23,7 @@ public class KeyValue {
 //		this.privateKey = privateKey;
 //	}
 
-	public byte[][][] getPublicKey() {
+	public PublicKey getPublicKey() {
 		return publicKey;
 	}
 //
